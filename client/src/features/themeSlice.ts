@@ -1,5 +1,5 @@
 import { createSlice } from "@reduxjs/toolkit";
-const getTheme = () => {
+const getTheme = (): string => {
     return localStorage.getItem("theme") as "light" | "dark" || "light"
 }
 const themeSlice = createSlice({

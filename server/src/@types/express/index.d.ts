@@ -1,7 +1,7 @@
 import { Request } from "express"
 import { IUser } from "../../models/user.model"
 declare module "express" {
-    export interface Request {
-        user?: IUser;
-    }
+  export interface Request {
+    user?: IUser;
+  }
 }
