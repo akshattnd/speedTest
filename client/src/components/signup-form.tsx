@@ -12,13 +12,14 @@ import { Label } from "@/components/ui/label"
 import { Link } from "react-router-dom"
 import Loading from "./Loading"
 import { ChangeEvent, FormEvent, useEffect, useState } from "react"
-
-import { useSignup } from "@/services/hook"
+import { login } from "@/features/authSlice"
+import { useAppDispatch, useSignup } from "@/services/hook"
 import { toast } from "sonner"
 export function SignupForm({
   className,
   ...props
 }: React.ComponentProps<"div">) {
+  const dispatch = useAppDispatch();
   const { mutate, isSuccess, data, isPending, isError, error } = useSignup();
   const [formData, setFormData] = useState({
     username: "",
@@ -43,8 +44,8 @@ export function SignupForm({
     if (data) {
       toast(data.msg ?? " login successfully");
     }
-
-  }, [isSuccess])
+    dispatch(login());
+  }, [isSuccess, data])
   useEffect(() => {
     if (isError) {
       toast((error as any).response.data.msg ?? error.message);

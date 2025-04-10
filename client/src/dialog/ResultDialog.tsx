@@ -10,7 +10,7 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog"
 import { TestResult } from "@/types";
-import { ReactNode, useEffect } from "react"
+import { ReactNode } from "react"
 import { useSubmit } from "@/services/hook";
 
 export function ResultDialog({ children, result }: { children: Readonly<ReactNode>, result: Readonly<TestResult> }) {

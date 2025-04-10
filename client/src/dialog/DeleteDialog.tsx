@@ -9,30 +9,27 @@ import {
     DialogTitle,
     DialogTrigger,
 } from "@/components/ui/dialog"
-import { useDelete } from "@/services/hook";
+import { useAppDispatch, useDelete } from "@/services/hook";
 import { ReactNode, useEffect } from "react"
-import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
+import { logout } from "@/features/authSlice";
 
 export function DeleteDialog({ children }: { children: ReactNode }) {
-
-    const navigate = useNavigate();
+    const dispatch = useAppDispatch();
     const { mutate, data, isError, error, isSuccess } = useDelete();
-
     useEffect(() => {
         if (data) {
             toast(data.msg)
-            navigate("/login");
-        }
+            dispatch(logout())
 
-    }, [isSuccess])
+        }
+    }, [isSuccess, data])
     useEffect(() => {
         if (error) {
             const msg = ((error as any).response.data.msg) ?? error.message;
             toast(msg);
         }
-
-    }, [isError])
+    }, [isError, error])
 
     return (
         <Dialog>

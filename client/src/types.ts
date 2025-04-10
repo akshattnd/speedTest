@@ -13,7 +13,7 @@ export interface User {
   username: string;
   email: string;
   password?: string;
-  results: Result[] | string[];
+  results: string[];
   createdAt: Date;
 }
 export interface TestResult {

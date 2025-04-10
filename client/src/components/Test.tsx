@@ -15,11 +15,12 @@ import {
 } from "@/components/ui/select"
 import { useAppSelector, useTest } from "@/services/hook"
 import { Checkbox } from "@/components/ui/checkbox"
+import Loading from "./Loading"
 export default function Test() {
   const user = useAppSelector(state => state.auth.user);
   const [testId, setTestId] = useState(() => generateId());
   const [typedWord, setTypedWord] = useState<string>("");
-  const [length, setLength] = useState<string>("100")
+  const [length, setLength] = useState<string>("50")
   const [wpm, setWpm] = useState<number>(0);
   const [timeTaken, setTimeTaken] = useState<number>(0);
   const [accuracy, setAccuracy] = useState<number>(0);
@@ -32,7 +33,7 @@ export default function Test() {
   const [currentWordIndex, setCurrentWordIndex] = useState<number>(0);
 
   const [correctTypedWordLen, setCorrectTypeWordLen] = useState<number>(0);
-  const { mutate, data, isSuccess, isError, error } = useTest();
+  const { mutate, data, isSuccess, isError, isPending, error } = useTest();
   const [correct, setCorrect] = useState<number[]>([])
   const [wrong, setWrong] = useState<number[]>([])
   const [result, setResult] = useState<TestResult>();
@@ -118,10 +119,10 @@ export default function Test() {
     setAccuracy(timeTaken > 1 && typedWordLen > 0 ? Math.ceil((correctTypedWordLen / typedWordLen) * 100) : 0);
 
   }, [timeTaken, correctTypedWordLen, typedWordLen]);
-  useEffect(() => { if (finish) { handleFinish() } }, [finish, start]);
+  useEffect(() => { if (finish) { handleFinish() } }, [finish, start, result]);
   return (
     <div className="flex-1">
-      <div className="flex flex-col sm:flex-row justify-evenly space-y-4 sm:p-4 p-2">
+      {isPending ? <Loading /> : <>  <div className="flex flex-col sm:flex-row justify-evenly space-y-4 sm:p-4 p-2">
         <Select defaultValue={length} onValueChange={(value) => setLength(value)}>
           <SelectTrigger className="w-[100px]">
             <SelectValue placeholder="Length" />
@@ -133,7 +134,6 @@ export default function Test() {
               <SelectItem value="35">25</SelectItem>
               <SelectItem value="50">50</SelectItem>
               <SelectItem value="100">100</SelectItem>
-              <SelectItem value="150">135</SelectItem>
             </SelectGroup>
           </SelectContent>
         </Select>
@@ -162,24 +162,25 @@ export default function Test() {
         </>}
 
       </div>
-      <div className="container max-w-2xl mx-auto">
-        <div className="w-full sm:p-4 p-2 ">
-          <div className="flex flex-col gap-4 sm:gap-6">
-            <div className="text-lg flex flex-wrap p-2  border-2 shadow-lg rounded-2xl ">
-              {words && words.map((word, idx) => <div className={`p-1 text-foreground ${(correct.includes(idx)) ? "text-green-600" : wrong.includes(idx) ? "text-red-600" : ""}`} key={idx}>{word}</div>)}
+        <div className="container max-w-2xl mx-auto">
+          <div className="w-full sm:p-4 p-2 ">
+            <div className="flex flex-col gap-4 sm:gap-6">
+              <div className="sm:text-lg text-sm flex flex-wrap p-2  border-2 shadow-lg rounded-2xl ">
+                {words && words.map((word, idx) => <div className={`p-1 text-foreground ${(correct.includes(idx)) ? "text-green-600" : wrong.includes(idx) ? "text-red-600" : ""}`} key={idx}>{word}</div>)}
+              </div>
+              <Textarea className="shadow-lg rounded-2xl" placeholder="Start typing here." disabled={!start} value={typedWord} onChange={handleChange} spellCheck={false} />
             </div>
-            <Textarea className="shadow-lg rounded-2xl" placeholder="Start typing here." disabled={!start} value={typedWord} onChange={handleChange} spellCheck={false} />
           </div>
         </div>
-      </div>
-      <div className="flex justify-evenly mx-auto max-w-lg">
-        <Button onClick={handleStart} className="bg-green-500 text-foreground " disabled={start}>start</Button>
-        <Button onClick={handleReset} className="bg-red-500 text-foreground" >reset</Button>
-        {result && <ResultDialog result={result!}>
-          <Button ref={submitRef} className="hidden">submit</Button>
-        </ResultDialog>
-        }
-      </div>
+        <div className="flex justify-evenly mx-auto max-w-lg">
+          <Button onClick={handleStart} className="bg-green-500 text-foreground " disabled={start}>start</Button>
+          <Button onClick={handleReset} className="bg-red-500 text-foreground" >reset</Button>
+          {result && <ResultDialog result={result!}>
+            <Button ref={submitRef} className="hidden">submit</Button>
+          </ResultDialog>
+          }
+        </div></>}
+
     </div>
   )
 }

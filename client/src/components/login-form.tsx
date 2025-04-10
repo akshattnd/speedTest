@@ -11,10 +11,10 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Link } from "react-router-dom"
 import { ChangeEvent, FormEvent, useEffect, useState } from "react"
-import { useLogin } from "@/services/hook"
+import { useAppDispatch, useLogin } from "@/services/hook"
 import { toast } from "sonner"
 import Loading from "./Loading"
-
+import { login } from "@/features/authSlice"
 export function LoginForm({
   className,
   ...props
@@ -25,6 +25,7 @@ export function LoginForm({
     email: "",
     password: "",
   })
+  const dispatch = useAppDispatch();
 
   function handleSubmit(e: FormEvent<HTMLFormElement>) {
     e.preventDefault();
@@ -39,14 +40,15 @@ export function LoginForm({
   }
   useEffect(() => {
     if (data) {
+      dispatch(login());
       toast(data.msg ?? " login successfully");
     }
-  }, [isSuccess])
+  }, [isSuccess, data])
   useEffect(() => {
     if (isError) {
-      toast((error as any).response.data.msg ?? error.message);
+      toast((error as any).response.data.msg ?? (error as any).response.data ?? error.message);
     }
-  }, [isError])
+  }, [isError, error])
   return (
 
     <div className={cn("flex flex-col gap-6", className)} {...props}>

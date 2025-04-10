@@ -1,17 +1,15 @@
 import { useDispatch, useSelector } from 'react-redux'
 import type { RootState, AppDispatch } from "@/services/Store"
-import { login as userLogin, logout as userLogout } from '@/features/authSlice'
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { deleteUser, generateTest, getAllResults, getResult, isAuth, login, logout, signup, submitResult, updateUser, user } from "./api"
 
 export const useLogin = () => {
-  const dispatch = useAppDispatch();
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: ({ email, password }: { email: string, password: string }) => login(email, password),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['auth'] })
-      dispatch(userLogin());
+
     }
   })
 }
@@ -26,23 +24,19 @@ export const useAuth = () => {
 }
 export const useSignup = () => {
   const queryClient = useQueryClient();
-  const dispatch = useAppDispatch();
   return useMutation({
     mutationFn: ({ username, email, password }: { username: string, email: string, password: string }) => signup(username, email, password),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['auth'] })
-      dispatch(userLogin());
     }
   });
 }
 export const useLogout = () => {
-  const dispatch = useAppDispatch()
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: logout,
     onSuccess: () => {
       queryClient.setQueryData(["auth"], null)
-      dispatch(userLogout());
     },
   });
 }
@@ -51,9 +45,10 @@ export const useUser = () => {
   return useQuery({
     queryKey: ["user"],
     queryFn: user,
-    staleTime: 1000 * 60 * 5,
     retry: false,
-  });
+    refetchOnWindowFocus: false,
+    staleTime: Infinity,
+  })
 };
 export const useUpdate = () => {
   const queryClient = useQueryClient();

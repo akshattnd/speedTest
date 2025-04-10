@@ -70,7 +70,7 @@ export const signup = async (req: Request, res: Response, next: NextFunction) =>
 }
 export const logout = (req: Request, res: Response) => {
   if (!req.user) {
-    throw new CustomError("unauthorize access", 401);
+    console.log(req)
   }
   res.clearCookie("token", {
     httpOnly: true,

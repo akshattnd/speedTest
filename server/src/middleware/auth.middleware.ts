@@ -17,14 +17,13 @@ const auth = async (req: Request, res: Response, next: NextFunction) => {
     }
     const { data: id } = decodedToken as JwtPayload;
 
-    const user = await User.findById(id) as IUser; // add .populate("results). after its creation.
+    const user = await User.findById(id) as IUser;
     if (!user) {
       throw new CustomError("user not found! ", 404);
     }
     req.user = user;
     next();
   } catch (err) {
-    console.log(err);
     next(err);
   }
 }

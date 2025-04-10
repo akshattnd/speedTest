@@ -1,6 +1,6 @@
 export default function Footer() {
     return (
-        <div className={`sm:p-4 p-2 text-center  w-full shadow-lg dark:shadow-secondary `}>
+        <div className={`sm:p-8 p-4 text-center  min-w-svw shadow-lg dark:shadow-secondary `}>
             <p className="md:text-lg text-sm mx-auto ">
                 © Website Developed by{" "}
                 <a
